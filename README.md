@@ -18,3 +18,16 @@ git remote add public git@github.com:katspaugh/wavesurfer.js.git
 git pull public master # Creates a merge commit
 git push origin master
 ```
+
+## Hacking
+
+```
+npm install
+npm start
+```
+
+then visit a local URL, e.g.  `http://localhost:8080/example/spectrogram/`
+
+## Notes
+
+Many of the deps are marked deprecated
