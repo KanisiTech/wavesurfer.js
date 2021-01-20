@@ -149,7 +149,7 @@ export default class MultiCanvas extends Drawer {
             this.style(document.createElement('wave'), {
                 position: 'absolute',
                 zIndex: 6, // bigger than progress
-                left: 0,
+                right: 0,
                 top: 0,
                 bottom: 0,
                 overflow: 'hidden',
@@ -653,5 +653,22 @@ export default class MultiCanvas extends Drawer {
      */
     updateProgress(position) {
         this.style(this.progressWave, { width: position + 'px' });
+    }
+
+    /**
+     * Update restricted region data
+     *
+     * @param {number} positionLeft X-Offset of trim start position in pixels
+     * @param {number} positionRight X-Offset of trim end position in pixels
+     */
+    updateRestrict(positionLeft, positionRight) {
+        this.style(this.restrictedWaveLeft, {width: positionLeft + 'px' });
+        const right_width = (this.width / this.params.pixelRatio) - positionRight;
+        this.style(this.restrictedWaveRight, {
+            "width": right_width + 'px'
+        });
+        this.canvases.forEach((entry, i) => {
+            entry.restrictRight.style["margin-left"] = '-' + positionRight + 'px';
+        });
     }
 }
