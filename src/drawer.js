@@ -303,15 +303,27 @@ export default class Drawer extends util.Observer {
         return true;
     }
 
+
+    /**
+     * Converts a fraction-of-duration to an offset in pixels
+     *
+     * @param {number} f From 0 to 1
+     * @return {number} offset in pixels
+     */
+    fractionToPixels(f) {
+        const minPxDelta = 1 / this.params.pixelRatio;
+        const pos = Math.round(f * this.width) * minPxDelta;
+        return pos;
+    }
+
     /**
      * Called by wavesurfer when progress should be rendered
      *
      * @param {number} progress From 0 to 1
      */
     progress(progress) {
+        const pos = this.fractionToPixels(progress);
         const minPxDelta = 1 / this.params.pixelRatio;
-        const pos = Math.round(progress * this.width) * minPxDelta;
-
         if (pos < this.lastPos || pos - this.lastPos >= minPxDelta) {
             this.lastPos = pos;
 
@@ -325,6 +337,18 @@ export default class Drawer extends util.Observer {
 
             this.updateProgress(pos);
         }
+    }
+
+    /**
+     * Called by wavesurfer to update restricted regions
+     *
+     * @param {number} frac_left From 0 to 1
+     * @param {number} frac_right From 0 to 1
+     */
+    restrict(frac_left, frac_right) {
+        const left_px = this.fractionToPixels(frac_left);
+        const right_px = this.fractionToPixels(frac_right);
+        this.updateRestrict(left_px, right_px);
     }
 
     /**
@@ -405,6 +429,8 @@ export default class Drawer extends util.Observer {
      * Update restricted region data
      *
      * @abstract
+     * @param {number} positionLeft X-Offset of trim start position in pixels
+     * @param {number} positionRight X-Offset of trim end position in pixels
      */
-    updateRestrict() {}
+    updateRestrict(positionLeft, positionRight) {}
 }
