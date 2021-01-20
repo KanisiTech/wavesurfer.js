@@ -134,16 +134,25 @@ export default class CanvasEntry {
         this.end = this.start + elementWidth / totalWidth;
 
         // set wave canvas dimensions
-        this.wave.width = width;
-        this.wave.height = height;
         let elementSize = { width: elementWidth + 'px' };
-        style(this.wave, elementSize);
 
-        if (this.hasProgressCanvas) {
-            // set progress canvas dimensions
-            this.progress.width = width;
-            this.progress.height = height;
-            style(this.progress, elementSize);
+        /**
+         * Style an element for width & height
+         *
+         * @param {HtmlElement} element Element to update
+         */
+        function updateStyle(element) {
+            element.width = width;
+            element.height = height;
+            style(element, elementSize);
+        }
+
+        updateStyle(this.wave);
+
+        if (this.hasProgressCanvas) {updateStyle(this.progress);}
+        if (this.hasRestrictedCanvases) {
+            updateStyle(this.restrictLeft);
+            updateStyle(this.restrictRight);
         }
     }
 
