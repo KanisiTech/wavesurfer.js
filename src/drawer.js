@@ -400,4 +400,11 @@ export default class Drawer extends util.Observer {
      * @param {number} position X-Offset of progress position in pixels
      */
     updateProgress(position) {}
+
+    /**
+     * Update restricted region data
+     *
+     * @abstract
+     */
+    updateRestrict() {}
 }
