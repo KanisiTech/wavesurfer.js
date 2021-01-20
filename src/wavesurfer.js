@@ -904,14 +904,34 @@ export default class WaveSurfer extends util.Observer {
     }
 
     /**
+     * Clamps 'progress' to restricted region
+     *
+     * @param {number} progress Between 0 (=beginning) and 1 (=end)
+     * @return Clamped progress
+     */
+    restrictProgress(progress) {
+        const restrict = this.params.restrictOptions.restrict;
+        if (!restrict) return progress;
+
+        const min_progress = this.params.restrictOptions.start / this.getDuration();
+        const max_progress = this.params.restrictOptions.end / this.getDuration();
+
+        if (progress < min_progress) progress = min_progress;
+        if (progress > max_progress) progress = max_progress;
+
+        return progress;
+    }
+
+    /**
      * Seeks to a position and centers the view
      *
      * @param {number} progress Between 0 (=beginning) and 1 (=end)
      * @example
      * // seek and go to the middle of the audio
-     * wavesurfer.seekTo(0.5);
+     * wavesurfer.seekAndCenter(0.5);
      */
     seekAndCenter(progress) {
+        progress = this.restrictProgress(progress);
         this.seekTo(progress);
         this.drawer.recenter(progress);
     }
@@ -938,6 +958,9 @@ export default class WaveSurfer extends util.Observer {
                 'Error calling wavesurfer.seekTo, parameter must be a number between 0 and 1!'
             );
         }
+
+        progress = this.restrictProgress(progress);
+
         this.fireEvent('interaction', () => this.seekTo(progress));
 
         // avoid small scrolls while paused seeking
@@ -1339,6 +1362,7 @@ export default class WaveSurfer extends util.Observer {
         this.backend.load(buffer);
         this.drawBuffer();
         this.updateRestrict();
+        this.seekTo(0);
         this.isReady = true;
         this.fireEvent('ready');
     }
