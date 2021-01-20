@@ -249,6 +249,32 @@ export default class MultiCanvas extends Drawer {
             );
         }
 
+        // hasRestrictedCanvases
+        if (this.hasRestrictedCanvases) {
+            entry.initRestricted(
+                // trimmed-left
+                this.restrictedWaveLeft.appendChild(
+                    this.style(document.createElement('canvas'), {
+                        position: 'absolute',
+                        left: leftOffset + 'px',
+                        top: 0,
+                        bottom: 0,
+                        height: '100%'
+                    })
+                ),
+                // trimmed-start
+                this.restrictedWaveRight.appendChild(
+                    this.style(document.createElement('canvas'), {
+                        position: 'absolute',
+                        left: leftOffset + 'px',
+                        top: 0,
+                        bottom: 0,
+                        height: '100%'
+                    })
+                )
+            );
+        }
+
         this.canvases.push(entry);
     }
 
