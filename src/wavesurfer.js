@@ -736,7 +736,12 @@ export default class WaveSurfer extends util.Observer {
         this.backend.on('pause', () => this.fireEvent('pause'));
 
         this.backend.on('audioprocess', time => {
-            this.drawer.progress(this.backend.getPlayedPercents());
+            let progress = this.backend.getPlayedPercents();
+            if (progress != this.restrictProgress(progress)) {
+                progress = this.restrictProgress(progress);
+                this.backend.pause();
+            }
+            this.drawer.progress(progress);
             this.fireEvent('audioprocess', time);
         });
 
@@ -1466,7 +1471,6 @@ export default class WaveSurfer extends util.Observer {
      * @returns {void}
      */
     loadBuffer(url, peaks, duration) {
-        console.log('loadBuffer');
         const load = action => {
             if (action) {
                 this.tmpEvents.push(this.once('ready', action));
