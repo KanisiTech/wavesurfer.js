@@ -215,6 +215,7 @@ export default class MultiCanvas extends Drawer {
         const entry = new this.EntryClass();
         entry.canvasContextAttributes = this.canvasContextAttributes;
         entry.hasProgressCanvas = this.hasProgressCanvas;
+        entry.hasRestrictedCanvases = this.hasRestrictedCanvases;
         entry.halfPixel = this.halfPixel;
         const leftOffset = this.maxCanvasElementWidth * this.canvases.length;
 
