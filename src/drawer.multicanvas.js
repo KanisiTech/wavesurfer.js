@@ -293,6 +293,12 @@ export default class MultiCanvas extends Drawer {
             lastEntry.progress.parentElement.removeChild(lastEntry.progress);
         }
 
+        // restrict
+        if (this.hasRestrictedCanvases) {
+            lastEntry.restrictLeft.parentElement.removeChild(lastEntry.restrictLeft);
+            lastEntry.restrictRight.parentElement.removeChild(lastEntry.restrictRight);
+        }
+
         // cleanup
         if (lastEntry) {
             lastEntry.destroy();
