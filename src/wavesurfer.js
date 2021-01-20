@@ -283,6 +283,8 @@ export default class WaveSurfer extends util.Observer {
         removeMediaElementOnDestroy: true,
         renderer: MultiCanvas,
         responsive: false,
+        // options for restricted view:
+        restrictOptions: { restrict: false, start: null, end: null, relativeTime: false, zoom: false, restrictColor: '#bbb' },
         rtl: false,
         scrollParent: false,
         skipLength: 2,
