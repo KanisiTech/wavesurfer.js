@@ -141,7 +141,6 @@ export default class MultiCanvas extends Drawer {
                 width: '0',
                 display: 'none',
                 boxSizing: 'border-box',
-                borderRightStyle: 'solid',
                 pointerEvents: 'none'
             })
         );
@@ -157,7 +156,6 @@ export default class MultiCanvas extends Drawer {
                 width: '0',
                 display: 'none',
                 boxSizing: 'border-box',
-                borderRightStyle: 'solid',
                 pointerEvents: 'none'
             })
         );
