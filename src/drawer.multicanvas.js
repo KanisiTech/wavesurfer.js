@@ -38,6 +38,13 @@ export default class MultiCanvas extends Drawer {
         this.hasProgressCanvas = params.waveColor != params.progressColor;
 
         /**
+         * Whether or not we have restricted regions.
+         *
+         * @type {boolean}
+         */
+        this.hasRestrictedCanvases = params.restrictOptions.restrict;
+
+        /**
          * @type {number}
          */
         this.halfPixel = 0.5 / params.pixelRatio;
