@@ -24,19 +24,55 @@
         <script src="app.js"></script>
         <script src="../trivia.js"></script>
 
+        <!-- Jquery for quick hacks -->
+        <script
+          src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+          integrity="sha256-4+XzXVhsDmqanXGHaHvgh1gMQKX40OUvDEBTu8JcmNs="
+          crossorigin="anonymous"></script>
+
         <!-- highlight.js for syntax highlighting in this example -->
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/default.min.css">
         <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/highlight.min.js"></script>
         <script>hljs.initHighlightingOnLoad();</script>
     </head>
 
+    <script>
+      function locationWithParam(on, off) {
+      if (window.location.href.indexOf('?') < 0) {
+                                  return window.location.href + '?' + on;
+                                              }
+      else if (window.location.href.indexOf(off) > 0) {
+                                  return window.location.href.replace(off, on);
+        }
+        else  if (window.location.href.indexOf(on) > 0) {
+        return window.location.href;
+        } else return window.location.href + '&' + on;
+        }
+
+        $(document).ready(function() {
+        if (window.location.href.indexOf('?') < 0) {
+                                                window.location.href += '?' + 'full&scroll' ;
+                                                }
+        $.each($('.nav').find('li'), function() {
+        $(this).toggleClass('active',
+          window.location.href.indexOf($(this).find('a').attr('data-param')) > -1);
+        });
+        });
+    </script>
+
     <body itemscope itemtype="http://schema.org/WebApplication">
         <div class="container">
             <div class="header">
                 <noindex>
                 <ul class="nav nav-pills pull-right">
-                    <li><a href="?fill">Fill</a></li>
-                    <li><a href="?scroll">Scroll</a></li>
+                    <li><a data-param="fill" href="javascript:window.location.assign(locationWithParam('fill', 'scroll'));">Fill</a></li>
+                    <li class="active"><a data-param="scroll" href="javascript:window.location.assign(locationWithParam('scroll', 'fill'));">Scroll</a></li>
+                </ul>
+                </noindex>
+                <noindex>
+                <ul class="nav nav-pills pull-right">
+                    <li><a data-param="narrow" href="javascript:window.location.assign(locationWithParam('narrow', 'full'));">Restrict</a></li>
+                    <li><a data-param="full" href="javascript:window.location.assign(locationWithParam('full', 'narrow'));">Full</a></li>
                 </ul>
                 </noindex>
 

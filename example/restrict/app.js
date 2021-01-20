@@ -23,6 +23,12 @@ document.addEventListener('DOMContentLoaded', function() {
         options.scrollParent = true;
     }
 
+    if (location.search.match('narrow')) {
+        options.restrictOptions.zoom = true;
+        console.log('narrow');
+    }
+
+
     if (location.search.match('normalize')) {
         options.normalize = true;
     }
