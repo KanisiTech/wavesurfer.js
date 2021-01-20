@@ -324,6 +324,8 @@ export default class MultiCanvas extends Drawer {
 
         // style element
         this.style(this.progressWave, { display: 'block' });
+        this.style(this.restrictedWaveLeft, { display: 'block' });
+        this.style(this.restrictedWaveRight, { display: 'block' });
     }
 
     /**
