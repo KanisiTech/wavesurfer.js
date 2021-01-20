@@ -149,7 +149,7 @@ export default class MultiCanvas extends Drawer {
             this.style(document.createElement('wave'), {
                 position: 'absolute',
                 zIndex: 6, // bigger than progress
-                right: 0,
+                left: 0,
                 top: 0,
                 bottom: 0,
                 overflow: 'hidden',
@@ -663,8 +663,10 @@ export default class MultiCanvas extends Drawer {
      */
     updateRestrict(positionLeft, positionRight) {
         this.style(this.restrictedWaveLeft, {width: positionLeft + 'px' });
+
         const right_width = (this.width / this.params.pixelRatio) - positionRight;
         this.style(this.restrictedWaveRight, {
+            "left": positionRight + 'px',
             "width": right_width + 'px'
         });
         this.canvases.forEach((entry, i) => {
