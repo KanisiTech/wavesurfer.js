@@ -7,7 +7,7 @@ import getId from './util/get-id';
 
 /**
  * The `CanvasEntry` class represents an element consisting of a wave `canvas`
- * and an (optional) progress wave `canvas`.
+ * and an (optional) progress wave `canvas`, and 'restrict' canvases.
  *
  * The `MultiCanvas` renderer uses one or more `CanvasEntry` instances to
  * render a waveform, depending on the zoom level.
@@ -38,6 +38,20 @@ export default class CanvasEntry {
          * @type {CanvasRenderingContext2D}
          */
         this.progressCtx = null;
+        /**
+         * The (optional) restricted wave nodes
+         *
+         * @type {HTMLCanvasElement}
+         */
+        this.restrictLeft = null;
+        this.restrictRight = null;
+        /**
+         * The (optional) restricted wave canvas rendering contexts
+         *
+         * @type {CanvasRenderingContext2D}
+         */
+        this.restrictLeftCtx = null;
+        this.restrictRightCtx = null;
         /**
          * Start of the area the canvas should render, between 0 and 1
          *
@@ -87,6 +101,19 @@ export default class CanvasEntry {
     initProgress(element) {
         this.progress = element;
         this.progressCtx = this.progress.getContext(
+            '2d',
+            this.canvasContextAttributes
+        );
+    }
+
+    initRestricted(elementLeft, elementRight) {
+        this.restrictLeft = elementLeft;
+        this.restrictRight = elementRight;
+        this.restrictLeftCtx = this.restrictLeft.getContext(
+            '2d',
+            this.canvasContextAttributes
+        );
+        this.restrictRightCtx = this.restrictRight.getContext(
             '2d',
             this.canvasContextAttributes
         );
