@@ -62,6 +62,16 @@ export default class MultiCanvas extends Drawer {
         this.progressWave = null;
 
         /**
+         * @type {HTMLElement}
+         */
+        this.restrictedWaveLeft = null;
+
+        /**
+         * @type {HTMLElement}
+         */
+        this.restrictedWaveRight = null;
+
+        /**
          * Class used to generate entries.
          *
          * @type {function}
@@ -108,6 +118,38 @@ export default class MultiCanvas extends Drawer {
             this.style(document.createElement('wave'), {
                 position: 'absolute',
                 zIndex: 3,
+                left: 0,
+                top: 0,
+                bottom: 0,
+                overflow: 'hidden',
+                width: '0',
+                display: 'none',
+                boxSizing: 'border-box',
+                borderRightStyle: 'solid',
+                pointerEvents: 'none'
+            })
+        );
+
+        this.restrictedWaveLeft = this.wrapper.appendChild(
+            this.style(document.createElement('wave'), {
+                position: 'absolute',
+                zIndex: 6, // bigger than progress
+                left: 0,
+                top: 0,
+                bottom: 0,
+                overflow: 'hidden',
+                width: '0',
+                display: 'none',
+                boxSizing: 'border-box',
+                borderRightStyle: 'solid',
+                pointerEvents: 'none'
+            })
+        );
+
+        this.restrictedWaveRight = this.wrapper.appendChild(
+            this.style(document.createElement('wave'), {
+                position: 'absolute',
+                zIndex: 6, // bigger than progress
                 left: 0,
                 top: 0,
                 bottom: 0,
