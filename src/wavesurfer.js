@@ -668,6 +668,14 @@ export default class WaveSurfer extends util.Observer {
         );
     }
 
+    updateRestrict() {
+        if (this.params.restrictOptions.restrict) {
+            const trimmed_left = this.params.restrictOptions.start / this.getDuration();
+            const trimmed_right = this.params.restrictOptions.end / this.getDuration();
+            this.drawer.restrict(trimmed_left, trimmed_right);
+        }
+    }
+
     /**
      * Create the drawer and draw the waveform
      *
@@ -687,6 +695,7 @@ export default class WaveSurfer extends util.Observer {
         this.drawer.on('redraw', () => {
             this.drawBuffer();
             this.drawer.progress(this.backend.getPlayedPercents());
+            this.updateRestrict();
         });
 
         // Click-to-seek
@@ -720,6 +729,7 @@ export default class WaveSurfer extends util.Observer {
 
         this.backend.on('finish', () => {
             this.drawer.progress(this.backend.getPlayedPercents());
+            this.updateRestrict();
             this.fireEvent('finish');
         });
         this.backend.on('play', () => this.fireEvent('play'));
@@ -1227,6 +1237,9 @@ export default class WaveSurfer extends util.Observer {
      * @emits WaveSurfer#redraw
      */
     drawBuffer() {
+        // Restrict:
+        // - if zooming, show narrow
+        // - if not zooming, outside areas gray
         const nominalWidth = Math.round(
             this.getDuration() *
                 this.params.minPxPerSec *
@@ -1325,6 +1338,7 @@ export default class WaveSurfer extends util.Observer {
     loadDecodedBuffer(buffer) {
         this.backend.load(buffer);
         this.drawBuffer();
+        this.updateRestrict();
         this.isReady = true;
         this.fireEvent('ready');
     }
@@ -1428,6 +1442,7 @@ export default class WaveSurfer extends util.Observer {
      * @returns {void}
      */
     loadBuffer(url, peaks, duration) {
+        console.log('loadBuffer');
         const load = action => {
             if (action) {
                 this.tmpEvents.push(this.once('ready', action));
@@ -1438,6 +1453,7 @@ export default class WaveSurfer extends util.Observer {
         if (peaks) {
             this.backend.setPeaks(peaks, duration);
             this.drawBuffer();
+            this.updateRestrict();
             this.fireEvent('waveform-ready');
             this.tmpEvents.push(this.once('interaction', load));
         } else {
@@ -1488,6 +1504,7 @@ export default class WaveSurfer extends util.Observer {
         if (peaks) {
             this.backend.setPeaks(peaks, duration);
             this.drawBuffer();
+            this.updateRestrict();
             this.fireEvent('waveform-ready');
         }
 
@@ -1503,6 +1520,7 @@ export default class WaveSurfer extends util.Observer {
                     this.backend.buffer = buffer;
                     this.backend.setPeaks(null);
                     this.drawBuffer();
+                    this.updateRestrict();
                     this.fireEvent('waveform-ready');
                 });
             });
