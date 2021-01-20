@@ -184,12 +184,18 @@ export default class CanvasEntry {
      *
      * @param {string} waveColor Fill color for the wave canvas
      * @param {?string} progressColor Fill color for the progress canvas
+     * @param {?string} restrictColor Fill color for the 'restricted portions' canvases
      */
-    setFillStyles(waveColor, progressColor) {
+    setFillStyles(waveColor, progressColor, restrictColor) {
         this.waveCtx.fillStyle = waveColor;
 
         if (this.hasProgressCanvas) {
             this.progressCtx.fillStyle = progressColor;
+        }
+
+        if (this.hasRestrictedCanvases) {
+            this.restrictLeftCtx.fillStyle = restrictColor;
+            this.restrictRightCtx.fillStyle = restrictColor;
         }
     }
 
