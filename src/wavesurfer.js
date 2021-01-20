@@ -1265,28 +1265,7 @@ export default class WaveSurfer extends util.Observer {
      * @emits WaveSurfer#redraw
      */
     drawBuffer() {
-        // Restrict:
-        // - if zooming, show narrow
-        // - if not zooming, outside areas gray
-        const nominalWidth = Math.round(
-            this.getDuration() *
-                this.params.minPxPerSec *
-                this.params.pixelRatio
-        );
-        const parentWidth = this.drawer.getWidth();
-        let width = nominalWidth;
-        // always start at 0 after zooming for scrolling : issue redraw left part
-        let start = 0;
-        let end = Math.max(start + parentWidth, width);
-        // Fill container
-        if (
-            this.params.fillParent &&
-            (!this.params.scrollParent || nominalWidth < parentWidth)
-        ) {
-            width = parentWidth;
-            start = 0;
-            end = width;
-        }
+        const {start, end, width} = this.computeDisplayParams();
 
         let peaks;
         if (this.params.partialRender) {
@@ -1314,6 +1293,64 @@ export default class WaveSurfer extends util.Observer {
             this.drawer.drawPeaks(peaks, width, start, end);
         }
         this.fireEvent('redraw', peaks, width);
+    }
+
+    /**
+     * Compute display params for the waveform (all in pixel units)
+     * start, end: portions of waveform to draw
+     * width: width of waveform
+     *
+     * @return Object with start, end, width
+     */
+    computeDisplayParams() {
+        const self = this;
+
+        /**
+         * Convert a time in seconds to a pixel x-ordinate in the waveform
+         *
+         * @param{number} t Time in seconds
+         * @return The x-offset in pixels corresponding to 't'
+         */
+        function timeToPixels(t) {
+            return Math.round(t *
+                              self.params.minPxPerSec *
+                              self.params.pixelRatio);
+        }
+        // Restrict:
+        // - if zooming, show narrow
+        // - if not zooming, outside areas gray
+        const nominalWidth = timeToPixels(this.getDuration());
+        const parentWidth = this.drawer.getWidth();
+
+        // always start at 0 after zooming for scrolling : issue redraw left part
+        let start = 0;
+        let end = Math.max(start + parentWidth, nominalWidth);
+
+        const restrictedZoom = (this.params.restrictOptions.restrict &&
+                                this.params.restrictOptions.zoom);
+
+        if (restrictedZoom) {
+            start = timeToPixels(this.params.restrictOptions.start);
+            end = timeToPixels(this.params.restrictOptions.end);
+        }
+
+        let width = nominalWidth;
+
+        // Fill container
+        if (
+            this.params.fillParent &&
+                (!this.params.scrollParent || nominalWidth < parentWidth)
+        ) {
+            width = parentWidth;
+            // scale 'start', 'end' to match parent width.
+            if (restrictedZoom) {
+                start = Math.round(start * parentWidth / nominalWidth);
+                end = Math.round(end * parentWidth / nominalWidth);
+            }
+            // TODO: 'end = Math.max(parentWidth, end)' for very short waves
+        }
+
+        return {start: start, end: end, width: width};
     }
 
     /**
