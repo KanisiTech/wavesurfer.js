@@ -300,27 +300,19 @@ export default class CanvasEntry {
      * should be rendered
      */
     drawLines(peaks, absmax, halfH, offsetY, start, end) {
-        this.drawLineToContext(
-            this.waveCtx,
-            peaks,
-            absmax,
-            halfH,
-            offsetY,
-            start,
-            end
-        );
+        const self = this;
 
-        if (this.hasProgressCanvas) {
-            this.drawLineToContext(
-                this.progressCtx,
-                peaks,
-                absmax,
-                halfH,
-                offsetY,
-                start,
-                end
-            );
+        /**
+         * Update a context with the required lines
+         *
+         * @param {CanvasContext2D} c Context to draw lines to
+         */
+        function updateContext(c) {
+            self.drawLineToContext(c, peaks, absmax, halfH, offsetY, start, end);
         }
+        updateContext(this.waveCtx);
+        if (this.hasProgressCanvas) { updateContext(this.progressCtx); }
+        if (this.hasRestrictedCanvases) { updateContext(this.restrictLeftCtx); updateContext(this.restrictRightCtx); }
     }
 
     /**
