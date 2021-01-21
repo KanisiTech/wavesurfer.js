@@ -657,21 +657,52 @@ export default class MultiCanvas extends Drawer {
     }
 
     /**
-     * Update restricted region data
+     * Update restricted region data---i.e. CSS properties of waveform divs & canvases.
      *
      * @param {number} positionLeft X-Offset of trim start position in pixels
      * @param {number} positionRight X-Offset of trim end position in pixels
      */
     updateRestrict(positionLeft, positionRight) {
-        this.style(this.restrictedWaveLeft, {width: positionLeft + 'px' });
+        // console.log('updateRestrict');
+        if (!this.params.restrictOptions.restrict) {
+            // console.log('updateRestrict: OFF');
+            this.style(this.restrictedWaveLeft, {display: 'none'});
+            this.style(this.restrictedWaveRight, {display: 'none'});
 
-        const right_width = (this.width / this.params.pixelRatio) - positionRight;
-        this.style(this.restrictedWaveRight, {
-            "left": positionRight + 'px',
-            "width": right_width + 'px'
-        });
-        this.canvases.forEach((entry, i) => {
-            entry.restrictRight.style["margin-left"] = '-' + positionRight + 'px';
-        });
+            return;
+        }
+
+        if (this.params.restrictOptions.narrow) {
+            // console.log('updateRestrict: NARROW');
+            // The waveform for the main and progress displays
+            // have been redrawn; don't adjust margins etc here.
+
+            // Grayed out (trimmed) regions are not visible.
+            this.style(this.restrictedWaveLeft, {display: 'none'});
+            this.style(this.restrictedWaveRight, {display: 'none'});
+        } else {
+            // console.log('updateRestrict: FULL');
+
+            // shrink / grow left restricted wave to match param
+            this.style(this.restrictedWaveLeft, { width: positionLeft + 'px' });
+
+            // q: how wide is the right restricted wave? a: full width less restricted portion.
+            const right_width = (this.width / this.params.pixelRatio) - positionRight;
+
+            // set width and position at 'positionRight'
+            this.style(this.restrictedWaveRight, {
+                "left": positionRight + 'px',
+                "width": right_width + 'px'
+            });
+            // shunt canvases back 'positionRight' so that visible porition in
+            // this.restrictedWaveRight starts at 'positionRight'.
+            this.canvases.forEach((entry, i) => {
+                entry.restrictRight.style["margin-left"] = '-' + positionRight + 'px';
+            });
+
+            // show in case grayed-out
+            this.style(this.restrictedWaveLeft, {display: 'block'});
+            this.style(this.restrictedWaveRight, {display: 'block'});
+        }
     }
 }
