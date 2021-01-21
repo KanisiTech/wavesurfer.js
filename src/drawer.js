@@ -79,6 +79,10 @@ export default class Drawer extends util.Observer {
     /**
      * Handle click event
      *
+     * Note: returns position within displayed waveform.  If the displayed
+     * waveform has been trimmed (restrictOptions.narrow), the client must
+     * offset the progress returned from here to account for this.
+     *
      * @param {Event} e Click event
      * @param {?boolean} noPrevent Set to true to not call `e.preventDefault()`
      * @return {number} Playback position from 0 to 1
@@ -94,21 +98,21 @@ export default class Drawer extends util.Observer {
         const nominalWidth = this.width;
         const parentWidth = this.getWidth();
 
+        const click_pos = (this.params.rtl ? bbox.right - clientX : clientX - bbox.left);
+        const wave_smaller_than_container = (!this.params.fillParent && nominalWidth < parentWidth);
+
         let progress;
-        if (!this.params.fillParent && nominalWidth < parentWidth) {
-            progress =
-                (this.params.rtl ? bbox.right - clientX : clientX - bbox.left) *
-                    (this.params.pixelRatio / nominalWidth) || 0;
+        if (wave_smaller_than_container) {
+            // Here the wave is squished up to the left of the container; if
+            // the user clicks 'off the end', progress will be > 1.
+            progress = click_pos * (this.params.pixelRatio / nominalWidth);
         } else {
-            progress =
-                ((this.params.rtl
-                    ? bbox.right - clientX
-                    : clientX - bbox.left) +
-                    this.wrapper.scrollLeft) /
-                    this.wrapper.scrollWidth || 0;
+            // add offset due to horizontal scroll, if any, and divide by full width.
+            progress = (click_pos + this.wrapper.scrollLeft) / this.wrapper.scrollWidth;
         }
 
-        return util.clamp(progress, 0, 1);
+
+        return util.clamp(progress || 0, 0, 1);
     }
 
     setupWrapperEvents() {
