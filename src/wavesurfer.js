@@ -801,7 +801,7 @@ export default class WaveSurfer extends util.Observer {
 
         this.drawer.on('redraw', () => {
             this.drawBuffer();
-            this.drawer.progress(this.backend.getPlayedPercents());
+            this.updateProgress();
             this.updateRestrict();
         });
 
@@ -881,7 +881,7 @@ export default class WaveSurfer extends util.Observer {
         this.fireEvent('backend-created', this.backend);
 
         this.backend.on('finish', () => {
-            this.drawer.progress(this.backend.getPlayedPercents());
+            this.updateProgress();
             this.updateRestrict();
             this.fireEvent('finish');
         });
@@ -890,11 +890,15 @@ export default class WaveSurfer extends util.Observer {
 
         this.backend.on('audioprocess', time => {
             let progress = this.backend.getPlayedPercents();
+
+            // This is a crude way to restrict playback to the region.  The more
+            // precise mechanism is to limit the played-back region in the
+            // back-end.
             if (progress != this.restrictProgress(progress)) {
                 progress = this.restrictProgress(progress);
                 this.backend.pause();
             }
-            this.drawer.progress(progress);
+            this.updateProgress(progress);
             this.fireEvent('audioprocess', time);
         });
 
@@ -904,7 +908,7 @@ export default class WaveSurfer extends util.Observer {
             this.params.backend === 'MediaElementWebAudio'
         ) {
             this.backend.on('seek', () => {
-                this.drawer.progress(this.backend.getPlayedPercents());
+                this.updateProgress();
             });
 
             this.backend.on('volume', () => {
@@ -1062,9 +1066,10 @@ export default class WaveSurfer extends util.Observer {
     }
 
     /**
-     * Clamps 'progress' to restricted region
+     * Clamps 'progress' to restricted region of waveform
      *
      * @param {number} progress Between 0 (=beginning) and 1 (=end)
+     *                           -- relative to waveform
      * @return Clamped progress
      */
     restrictProgress(progress) {
@@ -1125,7 +1130,8 @@ export default class WaveSurfer extends util.Observer {
         const oldScrollParent = this.params.scrollParent;
         this.params.scrollParent = false;
         this.backend.seekTo(progress * this.getDuration());
-        this.drawer.progress(progress);
+
+        this.updateProgress();
 
         this.params.scrollParent = oldScrollParent;
         this.fireEvent('seek', progress);
@@ -1139,7 +1145,6 @@ export default class WaveSurfer extends util.Observer {
     stop() {
         this.pause();
         this.seekTo(0);
-        this.drawer.progress(0);
     }
 
     /**
@@ -1528,7 +1533,7 @@ export default class WaveSurfer extends util.Observer {
         }
 
         this.drawBuffer();
-        this.drawer.progress(this.backend.getPlayedPercents());
+        this.updateProgress();
 
         this.drawer.recenter(this.getCurrentTime() / this.getDuration());
         this.fireEvent('zoom', pxPerSec);
