@@ -1,3 +1,4 @@
+/* eslint-env jquery */
 'use strict';
 
 var wavesurfer;
@@ -10,6 +11,7 @@ document.addEventListener('DOMContentLoaded', function() {
         progressColor: 'purple',
         loaderColor: 'purple',
         cursorColor: 'navy',
+        maxCanvasWidth: 4000, // good for debugging
         restrictOptions: { restrict: true, start: 5, end: 15, relativeTime: false, zoom: false, color: '#bbb' },
         plugins: [
             WaveSurfer.timeline.create({
@@ -25,7 +27,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     if (location.search.match('narrow')) {
         options.restrictOptions.zoom = true;
-        console.log('narrow');
     }
 
 
@@ -57,4 +58,13 @@ document.addEventListener('DOMContentLoaded', function() {
     })();
 
     wavesurfer.load('../media/demo.wav');
+
+    $("[data-action=toggle-canvas-size]").click(function() {
+        if (options.maxCanvasWidth > 1000) {
+            options.maxCanvasWidth = 40;
+        } else {
+            options.maxCanvasWidth = 4000;
+        }
+        wavesurfer.setCanvasWidth(options.maxCanvasWidth);
+    });
 });
