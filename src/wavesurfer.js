@@ -548,6 +548,11 @@ export default class WaveSurfer extends util.Observer {
         this.drawBuffer();
     }
 
+    updateRestrictOptions(o) {
+        this.params.restrictOptions = o;
+        this.updateRestrict();
+    }
+
     /**
      * Initialise the wave
      *
@@ -715,6 +720,15 @@ export default class WaveSurfer extends util.Observer {
             const trimmed_left = this.params.restrictOptions.start / this.getDuration();
             const trimmed_right = this.params.restrictOptions.end / this.getDuration();
             this.drawer.restrict(trimmed_left, trimmed_right);
+
+            // If we switched on 'restrict', we may need to clamp the position.
+            const t = this.getCurrentTime() / this.getDuration();
+            if (t != this.restrictProgress(t)) {
+                setTimeout(() => this.seekTo(t), 0);
+            }
+        }
+        else {
+            this.drawer.restrict(0, 1);
         }
     }
 
