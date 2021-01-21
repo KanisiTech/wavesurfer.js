@@ -820,6 +820,52 @@ export default class WaveSurfer extends util.Observer {
     }
 
     /**
+     * Convert 'view offset' (e.g. click position) to waveform
+     * position, by allowing for restrict.narrow.
+     *
+     * @param {number} view_offset The view-relative click pos
+     * @returns The waveform offset (0--1)
+     */
+    viewOffsetToWaveformOffset(view_offset) {
+        let waveform_offset;
+
+        const restrictOptions = this.params.restrictOptions;
+        if ((!restrictOptions.restrict) ||
+            (!restrictOptions.narrow)) {
+            waveform_offset = view_offset;
+        } else {
+            const restrict_offset = restrictOptions.start / this.getDuration();
+            const restrict_scale = (restrictOptions.end - restrictOptions.start) / this.getDuration();
+            waveform_offset = view_offset * restrict_scale + restrict_offset;
+        }
+
+        return waveform_offset;
+    }
+
+    /**
+     * Convert waveform position to view offset, by allowing for
+     * restrict.narrow.
+     *
+     * @param {number} waveform_offset The view-relative click pos
+     * @returns The view offset (0--1)
+     */
+    waveformOffsetToViewOffset(waveform_offset) {
+        let view_offset;
+
+        const restrictOptions = this.params.restrictOptions;
+        if ((!restrictOptions.restrict) ||
+            (!restrictOptions.narrow)) {
+            view_offset = waveform_offset;
+        } else {
+            const restrict_offset = restrictOptions.start / this.getDuration();
+            const restrict_scale = (restrictOptions.end - restrictOptions.start) / this.getDuration();
+            view_offset = (waveform_offset - restrict_offset) / restrict_scale;
+        }
+
+        return view_offset;
+    }
+
+    /**
      * Create the backend
      *
      * @private
