@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', function() {
         loaderColor: 'purple',
         cursorColor: 'navy',
         maxCanvasWidth: 4000, // good for debugging
-        restrictOptions: { restrict: true, start: 5, end: 15, relativeTime: false, zoom: false, color: '#bbb' },
+        restrictOptions: { restrict: true, start: 5, end: 15, relativeTime: false, narrow: false, color: '#bbb' },
         plugins: [
             WaveSurfer.timeline.create({
                 container: '#wave-timeline'
@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     if (location.search.match('narrow')) {
-        options.restrictOptions.zoom = true;
+        options.restrictOptions.narrow = true;
     }
 
 
@@ -82,6 +82,15 @@ document.addEventListener('DOMContentLoaded', function() {
             options.restrictOptions.restrict = false;
         } else {
             options.restrictOptions.restrict = true;
+        }
+        wavesurfer.updateRestrictOptions(options.restrictOptions);
+    });
+
+    $("[data-action=toggle-narrow]").click(function() {
+        if (options.restrictOptions.narrow) {
+            options.restrictOptions.narrow = false;
+        } else {
+            options.restrictOptions.narrow = true;
         }
         wavesurfer.updateRestrictOptions(options.restrictOptions);
     });

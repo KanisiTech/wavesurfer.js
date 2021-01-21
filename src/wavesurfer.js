@@ -284,7 +284,7 @@ export default class WaveSurfer extends util.Observer {
         renderer: MultiCanvas,
         responsive: false,
         // options for restricted view:
-        restrictOptions: { restrict: false, start: null, end: null, relativeTime: false, zoom: false, restrictColor: '#bbb' },
+        restrictOptions: { restrict: false, start: null, end: null, relativeTime: false, narrow: false, restrictColor: '#bbb' },
         rtl: false,
         scrollParent: false,
         skipLength: 2,
@@ -1375,8 +1375,8 @@ export default class WaveSurfer extends util.Observer {
                               self.params.pixelRatio);
         }
         // Restrict:
-        // - if zooming, show narrow
-        // - if not zooming, outside areas gray
+        // - if narrow, show narrow
+        // - if not narrow, outside areas gray
         const nominalWidth = timeToPixels(this.getDuration());
         const parentWidth = this.drawer.getWidth();
 
@@ -1384,10 +1384,10 @@ export default class WaveSurfer extends util.Observer {
         let start = 0;
         let end = Math.max(start + parentWidth, nominalWidth);
 
-        const restrictedZoom = (this.params.restrictOptions.restrict &&
-                                this.params.restrictOptions.zoom);
+        const restrictedNarrow = (this.params.restrictOptions.restrict &&
+                                  this.params.restrictOptions.narrow);
 
-        if (restrictedZoom) {
+        if (restrictedNarrow) {
             start = timeToPixels(this.params.restrictOptions.start);
             end = timeToPixels(this.params.restrictOptions.end);
         }
@@ -1401,7 +1401,7 @@ export default class WaveSurfer extends util.Observer {
         ) {
             width = parentWidth;
             // scale 'start', 'end' to match parent width.
-            if (restrictedZoom) {
+            if (restrictedNarrow) {
                 start = Math.round(start * parentWidth / nominalWidth);
                 end = Math.round(end * parentWidth / nominalWidth);
             }
