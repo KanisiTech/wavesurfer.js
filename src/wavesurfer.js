@@ -507,6 +507,29 @@ export default class WaveSurfer extends util.Observer {
     }
 
     /**
+     * Updates the max canvas width (for debugging)
+     *
+     * @param {number} w The new max canvas width
+     */
+    setCanvasWidth(w) {
+        this.params.maxCanvasWidth = w;
+        if (this.params.maxCanvasWidth <= 1) {
+            throw new Error('maxCanvasWidth must be greater than 1');
+        } else if (this.params.maxCanvasWidth % 2 == 1) {
+            throw new Error('maxCanvasWidth must be an even number');
+        }
+        this.drawer.destroy();
+        this.createDrawer();
+
+        // drawer has changed
+        this.params.plugins.forEach(plugin => {
+            this.initPlugin(plugin.name);
+        });
+
+        this.drawBuffer();
+    }
+
+    /**
      * Initialise the wave
      *
      * @example
