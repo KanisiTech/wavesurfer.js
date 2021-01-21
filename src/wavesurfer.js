@@ -518,6 +518,25 @@ export default class WaveSurfer extends util.Observer {
         } else if (this.params.maxCanvasWidth % 2 == 1) {
             throw new Error('maxCanvasWidth must be an even number');
         }
+
+        this.drawParamsChanged();
+    }
+
+    /**
+     * Updates the max canvas width (for debugging)
+     *
+     * @param {string} b The CSS border spec (e.g. 'dashed red')
+     */
+    setCanvasBorder(b) {
+        this.params.canvasBorder = b;
+        this.drawParamsChanged();
+    }
+
+    /**
+     * Call after changing draw params.
+     *
+     */
+    drawParamsChanged() {
         this.drawer.destroy();
         this.createDrawer();
 

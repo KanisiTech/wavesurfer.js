@@ -67,4 +67,13 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         wavesurfer.setCanvasWidth(options.maxCanvasWidth);
     });
+
+    $("[data-action=toggle-canvas-border]").click(function() {
+        if (options.canvasBorder == 'dashed red') {
+            options.canvasBorder = 'none';
+        } else {
+            options.canvasBorder = 'dashed red';
+        }
+        wavesurfer.setCanvasBorder(options.canvasBorder);
+    });
 });
