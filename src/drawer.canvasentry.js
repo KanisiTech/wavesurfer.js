@@ -329,57 +329,76 @@ export default class CanvasEntry {
      * should be rendered
      */
     drawLineToContext(ctx, peaks, absmax, halfH, offsetY, start, end) {
+        // Note: 'start' and 'end' params are indices into 'peaks'.  They define the 'view'.
+        //
+        // 'this.start' and 'this.end' are in relative units (0--1).  They define the portion
+        // of the view for which this canvas is responsible.
         if (!ctx) {
             return;
         }
 
-        const length = peaks.length / 2;
-        const first = Math.round(length * this.start);
+        const length = (end - start);
+
+        // 'first', 'last' are indices into peaks, for this canvas.
+        const first = start + Math.round(length * this.start);
 
         // use one more peak value to make sure we join peaks at ends -- unless,
         // of course, this is the last canvas
-        const last = Math.round(length * this.end) + 1;
+        const last = start + Math.round(length * this.end) + 1;
 
-        const canvasStart = first;
-        const canvasEnd = last;
-        const scale = this.wave.width / (canvasEnd - canvasStart - 1);
+        const scale = (ctx.canvas.width - 1) / length ;
 
         // optimization
         const halfOffset = halfH + offsetY;
         const absmaxHalf = absmax / halfH;
 
-        ctx.beginPath();
-        ctx.moveTo((canvasStart - first) * scale, halfOffset);
+        ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 
-        ctx.lineTo(
-            (canvasStart - first) * scale,
-            halfOffset - Math.round((peaks[2 * canvasStart] || 0) / absmaxHalf)
+        // debugging canvas extents / co-ords
+        if (this.canvasDebugLine) { // expected to be 'null' ordinarily.
+            ctx.beginPath();
+            ctx.moveTo(0, 0);
+            ctx.lineTo(ctx.canvas.width, ctx.canvas.height);
+            ctx.closePath();
+            ctx.stroke();
+        }
+
+        const first_peak_max = (peaks[0] || 0);
+        const first_peak_min = (peaks[1] || 0);
+
+        ctx.beginPath();
+        ctx.moveTo(0, halfOffset);
+        ctx.lineTo(0,
+            halfOffset - Math.round(first_peak_max / absmaxHalf)
         );
 
-        let i, peak, h;
-        for (i = canvasStart; i < canvasEnd; i++) {
-            peak = peaks[2 * i] || 0;
-            h = Math.round(peak / absmaxHalf);
-            ctx.lineTo((i - first) * scale + this.halfPixel, halfOffset - h);
+        let i, peak_val, peak_height, canvas_x, canvas_y;
+        for (i = first; i < last; i++) {
+            peak_val = peaks[2 * i] || 0;
+            peak_height = Math.round(peak_val / absmaxHalf);
+            canvas_x = (i - first) * scale + this.halfPixel;
+            canvas_y = halfOffset - peak_height;
+            ctx.lineTo(canvas_x, canvas_y);
         }
 
         // draw the bottom edge going backwards, to make a single
         // closed hull to fill
-        let j = canvasEnd - 1;
-        for (j; j >= canvasStart; j--) {
-            peak = peaks[2 * j + 1] || 0;
-            h = Math.round(peak / absmaxHalf);
-            ctx.lineTo((j - first) * scale + this.halfPixel, halfOffset - h);
+        let j = last - 1;
+        for (j; j >= first; j--) {
+            peak_val = peaks[2 * j + 1] || 0;
+            peak_height = Math.round(peak_val / absmaxHalf); // probably negative
+            canvas_x = (j - first) * scale + this.halfPixel;
+            canvas_y = halfOffset - peak_height;
+            ctx.lineTo(canvas_x, canvas_y);
         }
 
-        ctx.lineTo(
-            (canvasStart - first) * scale,
-            halfOffset -
-                Math.round((peaks[2 * canvasStart + 1] || 0) / absmaxHalf)
+        ctx.lineTo(0,
+            halfOffset - Math.round(first_peak_min / absmaxHalf)
         );
 
         ctx.closePath();
         ctx.fill();
+        // ctx.stroke();
     }
 
     /**
