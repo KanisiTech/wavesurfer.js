@@ -227,7 +227,8 @@ export default class MultiCanvas extends Drawer {
                     top: 0,
                     bottom: 0,
                     height: '100%',
-                    pointerEvents: 'none'
+                    pointerEvents: 'none',
+                    border: this.params.canvasBorder || 'none'
                 })
             )
         );
