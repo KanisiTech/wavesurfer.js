@@ -748,6 +748,17 @@ export default class WaveSurfer extends util.Observer {
         this.drawer.progress(view_offset);
     }
 
+    /**
+     * Called when the restrict options change, and when the restrict zone
+     * needs to be redrawn.
+     *
+     * - instruct drawer to update presentation of restricted zone
+     * - adjust playback position if needs be (e.g. was playing outside
+     *   restricted zone when 'restrict' activated)
+     * - update presentation of progress (in case view has changed due
+     *   to change in restrict.narrow).
+     *
+     */
     updateRestrict() {
         if (this.params.restrictOptions.restrict) {
             const trimmed_left = this.params.restrictOptions.start / this.getDuration();
@@ -757,7 +768,14 @@ export default class WaveSurfer extends util.Observer {
             // If we switched on 'restrict', we may need to clamp the position.
             const t = this.getCurrentTime() / this.getDuration();
             if (t != this.restrictProgress(t)) {
+                // Only seek if we need to clamp the position, as otherwise
+                // we would interrupt playback.  Seeking will update the progress.
                 setTimeout(() => this.seekTo(t), 0);
+            } else {
+                // If not seeking, we will still update the progress; if we have
+                // switched between 'narrow' and 'full' trim, it will need to be
+                // redrawn.
+                this.updateProgress();
             }
         }
         else {
