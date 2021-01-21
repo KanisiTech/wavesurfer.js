@@ -732,6 +732,22 @@ export default class WaveSurfer extends util.Observer {
         );
     }
 
+    /**
+     * Update width of progress display in 'drawer'.  Caller supplies progress
+     * position relative to waveform duration, & this function scales that
+     * to match the appropriate view offset (depending on restrict).
+     *
+     * @param {number} p Progress offset in waveform (default = getPlayedPercents())
+     */
+    updateProgress(p) {
+        if (p === undefined) {
+            p = this.backend.getPlayedPercents();
+        }
+
+        const view_offset = this.waveformOffsetToViewOffset(p);
+        this.drawer.progress(view_offset);
+    }
+
     updateRestrict() {
         if (this.params.restrictOptions.restrict) {
             const trimmed_left = this.params.restrictOptions.start / this.getDuration();
