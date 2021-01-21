@@ -1289,6 +1289,8 @@ export default class WaveSurfer extends util.Observer {
                 );
             }
         } else {
+            // Note that 'peaks' will have length 'width' but will only
+            // be populated from 'start' to 'end'.
             peaks = this.backend.getPeaks(width, start, end);
             this.drawer.drawPeaks(peaks, width, start, end);
         }
