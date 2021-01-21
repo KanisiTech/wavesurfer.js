@@ -364,10 +364,16 @@ export default class WaveSurfer extends util.Observer {
          * @private
          */
         this.params = Object.assign({}, this.defaultParams, params);
+        // 'deepify' the copy
         this.params.splitChannelsOptions = Object.assign(
             {},
             this.defaultParams.splitChannelsOptions,
             params.splitChannelsOptions
+        );
+        this.params.restrictOptions = Object.assign(
+            {},
+            this.defaultParams.restrictOptions,
+            params.restrictOptions
         );
         /** @private */
         this.container =
