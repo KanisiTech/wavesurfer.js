@@ -76,4 +76,13 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         wavesurfer.setCanvasBorder(options.canvasBorder);
     });
+
+    $("[data-action=toggle-restrict]").click(function() {
+        if (options.restrictOptions.restrict) {
+            options.restrictOptions.restrict = false;
+        } else {
+            options.restrictOptions.restrict = true;
+        }
+        wavesurfer.updateRestrictOptions(options.restrictOptions);
+    });
 });
