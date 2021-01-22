@@ -547,17 +547,17 @@ export default class WaveSurfer extends util.Observer {
         this.createDrawer();
 
         // drawer has changed
-        this.params.plugins.forEach(plugin => {
-            this.initPlugin(plugin.name);
-        });
+        this.destroyAllPlugins();
+        this.registerPlugins(this.params.plugins);
 
         this.drawBuffer();
+        this.updateRestrict();
     }
 
     updateRestrictOptions(new_opts) {
         const old_opts = this.params.restrictOptions;
-        const was_narrow = old_opts.restrict && old_opts.narrow;
 
+        const was_narrow = old_opts.restrict && old_opts.narrow;
         const now_narrow = new_opts.restrict && new_opts.narrow;
         const needs_redraw = (was_narrow != now_narrow);
 
