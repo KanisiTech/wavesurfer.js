@@ -333,20 +333,19 @@ export default class CanvasEntry {
         //
         // 'this.start' and 'this.end' are in relative units (0--1).  They define the portion
         // of the view for which this canvas is responsible.
-        if (!ctx) {
-            return;
-        }
+        if (!ctx) return;
 
-        const length = (end - start);
+        const view_length = (end - start);
 
         // 'first', 'last' are indices into peaks, for this canvas.
-        const first = start + Math.round(length * this.start);
+        const first = start + Math.round(view_length * this.start);
 
         // use one more peak value to make sure we join peaks at ends -- unless,
         // of course, this is the last canvas
-        const last = start + Math.round(length * this.end) + 1;
+        const last = start + Math.round(view_length * this.end) + 1;
 
-        const scale = (ctx.canvas.width - 1) / length ;
+        const canvas_span = (last - first); // how many indices in this canvas
+        const scale = (ctx.canvas.width - 1) / canvas_span ;
 
         // optimization
         const halfOffset = halfH + offsetY;
@@ -355,7 +354,7 @@ export default class CanvasEntry {
         ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 
         // debugging canvas extents / co-ords
-        if (this.canvasDebugLine) { // expected to be 'null' ordinarily.
+        if (this.canvasDebugLine /* || 1*/) { // keep debug code (ESLint-friendly).
             ctx.beginPath();
             ctx.moveTo(0, 0);
             ctx.lineTo(ctx.canvas.width, ctx.canvas.height);
