@@ -331,9 +331,17 @@ export default class TimelinePlugin {
      *
      */
     renderCanvases() {
-        const duration =
-            this.params.duration ||
-            this.wavesurfer.backend.getDuration();
+        // not clear how to reconcile a user-specified duration / offset
+        // with a 'restrict' duration or offset.
+        const user_duration = this.params.duration;
+        const default_duration = this.wavesurfer.backend.getDuration();
+        const restrict_options = this.wavesurfer.params.restrictOptions;
+        const restricted_duration = (
+            (restrict_options.restrict && restrict_options.narrow)
+                ? (restrict_options.end - restrict_options.start)
+                : undefined);
+
+        const duration = user_duration || restricted_duration || default_duration;
 
         if (duration <= 0) {
             return;
