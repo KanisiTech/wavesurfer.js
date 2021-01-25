@@ -26,7 +26,7 @@ npm install
 npm start
 ```
 
-then visit a local URL, e.g.  `http://localhost:8080/example/spectrogram/`
+then visit a local URL, e.g.  `http://localhost:8080/example/restrict/`
 
 ## Notes
 

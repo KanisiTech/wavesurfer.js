@@ -284,7 +284,13 @@ export default class WaveSurfer extends util.Observer {
         renderer: MultiCanvas,
         responsive: false,
         // options for restricted view:
-        restrictOptions: { restrict: false, start: null, end: null, relativeTime: false, narrow: false, restrictColor: '#bbb' },
+        restrictOptions: {
+            restrict: false, // whether or not restrict mode is active
+            start: null, end: null, // restricted zone (times in seconds, e.g 1.03)
+            narrow: false, // display whole waveform with 'grayed-out' restricted parts, or just restricted part
+            relativeTime: false, // timeline plugin: display 0 at start of restricted zone
+            restrictColor: '#bbb' // color to 'gray-out' restricted parts
+        },
         rtl: false,
         scrollParent: false,
         skipLength: 2,
@@ -1971,3 +1977,6 @@ export default class WaveSurfer extends util.Observer {
         this.arraybuffer = null;
     }
 }
+
+// emacs indent setting (for Hugh)
+// (setq js-indent-level 4)
