@@ -94,4 +94,13 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         wavesurfer.updateRestrictOptions(options.restrictOptions);
     });
+
+    $("[data-action=toggle-relative]").click(function() {
+        if (options.restrictOptions.relativeTime) {
+            options.restrictOptions.relativeTime = false;
+        } else {
+            options.restrictOptions.relativeTime = true;
+        }
+        wavesurfer.updateRestrictOptions(options.restrictOptions);
+    });
 });

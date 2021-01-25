@@ -30,4 +30,9 @@ then visit a local URL, e.g.  `http://localhost:8080/example/restrict/`
 
 ## Notes
 
+Run `npm run build:plugins` to update plugins (not picked up by FS watcher).
+
+The 'timeline' plugin has an 'offset' param which shifts the display, but
+doesn't draw negative ticks.  That's why I added the 'timeOffset' param.
+
 Many of the deps are marked deprecated

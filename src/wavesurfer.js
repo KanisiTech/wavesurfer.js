@@ -567,11 +567,12 @@ export default class WaveSurfer extends util.Observer {
         const now_narrow = new_opts.restrict && new_opts.narrow;
         const needs_redraw = (was_narrow != now_narrow);
 
-        if (!this.drawer.hasRestrictedCanvases && new_opts.restrict) {
-            this.drawParamsChanged();
-        }
+        const needs_reset = ((!this.drawer.hasRestrictedCanvases && new_opts.restrict) ||
+                             (new_opts.relativeTime != old_opts.relativeTime));
 
         this.params.restrictOptions = {...old_opts, ...new_opts};
+
+        if (needs_reset) this.drawParamsChanged();
         if (needs_redraw) this.drawBuffer();
         this.updateRestrict();
     }

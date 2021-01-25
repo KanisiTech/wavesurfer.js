@@ -343,6 +343,13 @@ export default class TimelinePlugin {
 
         const duration = user_duration || restricted_duration || default_duration;
 
+        const default_first_label = 0;
+        const restrict_first_label = (
+            restrict_options.relativeTime
+                ? (restrict_options.narrow ? 0 : -restrict_options.start)
+                : (restrict_options.narrow ? restrict_options.start : 0));
+        const first_tick_label = (restrict_options.restrict ? restrict_first_label : default_first_label);
+
         if (duration <= 0) {
             return;
         }
@@ -374,7 +381,7 @@ export default class TimelinePlugin {
         );
 
         let curPixel = pixelsPerSecond * this.params.offset;
-        let curSeconds = 0;
+        let curSeconds = first_tick_label;
         let i;
         // build an array of position data with index, second and pixel data,
         // this is then used multiple times below
