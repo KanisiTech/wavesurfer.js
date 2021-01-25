@@ -772,6 +772,11 @@ export default class WaveSurfer extends util.Observer {
             const trimmed_right = this.params.restrictOptions.end / this.getDuration();
             this.drawer.restrict(trimmed_left, trimmed_right);
 
+            this.fireEvent("restriction-updated", {
+                start: this.params.restrictOptions.start,
+                end: this.params.restrictOptions.end
+            });
+
             // If we switched on 'restrict', we may need to clamp the position.
             const t = this.getCurrentTime() / this.getDuration();
             if (t != this.restrictProgress(t)) {
