@@ -386,7 +386,7 @@ export default class WaveSurfer extends util.Observer {
             params.restrictOptions
         );
 
-        if (old_bar_width != new_bar_width) { // 'undefined === undefined' is true
+        if ((old_bar_width != new_bar_width) && (this.drawer)) { // 'undefined === undefined' is true
             this.drawParamsChanged();
         }
     }

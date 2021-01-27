@@ -11,6 +11,7 @@ document.addEventListener("DOMContentLoaded", function() {
         progressColor: "purple",
         loaderColor: "purple",
         cursorColor: "navy",
+        barWidth: 10,
         maxCanvasWidth: 4000, // good for debugging
         restrictOptions: {
             restrict: true,
