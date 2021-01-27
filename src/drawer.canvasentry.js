@@ -200,6 +200,24 @@ export default class CanvasEntry {
     }
 
     /**
+     * Clear canvases
+     */
+    clear() {
+        /**
+         * Clear a context.
+         *
+         * @param {context} c Context to clear
+         */
+        function clearContext(c) {
+            c.clearRect(0, 0, c.canvas.width, c.canvas.height);
+        }
+        clearContext(this.waveCtx);
+        if (this.hasProgressCanvas) { clearContext(this.progressCtx); }
+        if (this.hasRestrictedCanvases) { clearContext(this.restrictLeftCtx); clearContext(this.restrictRightCtx); }
+
+    }
+
+    /**
      * Draw a rectangle for wave and progress
      *
      * @param {number} x X start position

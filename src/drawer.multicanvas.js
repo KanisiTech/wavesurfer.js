@@ -361,6 +361,7 @@ export default class MultiCanvas extends Drawer {
                 if (start === undefined) {
                     return;
                 }
+                this.clearCanvas();
 
                 // First: compute bar size and number of bars we can fit.
                 const bar_width = this.params.barWidth * this.params.pixelRatio;
@@ -476,6 +477,15 @@ export default class MultiCanvas extends Drawer {
             this.setFillStyles(entry, waveColor, progressColor);
             entry.drawLines(peaks, absmax, halfH, offsetY, start, end);
         });
+    }
+
+    /**
+     * Clear all canvases
+     */
+    clearCanvas() {
+        for (let i = 0; i < this.canvases.length; i++) {
+            this.canvases[i].clear();
+        }
     }
 
     /**
