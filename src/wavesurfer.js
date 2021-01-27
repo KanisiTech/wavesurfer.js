@@ -371,14 +371,16 @@ export default class WaveSurfer extends util.Observer {
         const old_bar_width = this.params.barWidth;
         const new_bar_width = params.barWidth;
 
-        this.params = Object.assign(this.params, this.defaultParams, params);
+        this.params = Object.assign({}, this.params, this.defaultParams, params);
         // 'deepify' the copy
         this.params.splitChannelsOptions = Object.assign(
+            {},
             this.params.splitChannelsOptions,
             this.defaultParams.splitChannelsOptions,
             params.splitChannelsOptions
         );
         this.params.restrictOptions = Object.assign(
+            {},
             this.params.restrictOptions,
             this.defaultParams.restrictOptions,
             params.restrictOptions
