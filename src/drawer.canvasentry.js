@@ -209,18 +209,20 @@ export default class CanvasEntry {
      * @param {number} radius Radius of the rectangle
      */
     fillRects(x, y, width, height, radius) {
-        this.fillRectToContext(this.waveCtx, x, y, width, height, radius);
+        const self = this;
 
-        if (this.hasProgressCanvas) {
-            this.fillRectToContext(
-                this.progressCtx,
-                x,
-                y,
-                width,
-                height,
-                radius
-            );
+        /**
+         * Update a context with the required rects
+         *
+         * @param {CanvasContext2D} c Context to draw lines to
+         */
+        function updateContext(c) {
+            self.fillRectToContext(c, x, y, width, height, radius);
         }
+
+        updateContext(this.waveCtx);
+        if (this.hasProgressCanvas) { updateContext(this.progressCtx); }
+        if (this.hasRestrictedCanvases) { updateContext(this.restrictLeftCtx); updateContext(this.restrictRightCtx); }
     }
 
     /**
