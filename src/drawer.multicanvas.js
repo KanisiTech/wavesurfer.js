@@ -361,39 +361,46 @@ export default class MultiCanvas extends Drawer {
                 if (start === undefined) {
                     return;
                 }
-                // Skip every other value if there are negatives.
-                const peakIndexScale = hasMinVals ? 2 : 1;
-                const length = peaks.length / peakIndexScale;
-                const bar = this.params.barWidth * this.params.pixelRatio;
-                const gap =
+
+                // First: compute bar size and number of bars we can fit.
+                const bar_width = this.params.barWidth * this.params.pixelRatio;
+                const gap_width =
                     this.params.barGap === null
-                        ? Math.max(this.params.pixelRatio, ~~(bar / 2))
+                        ? Math.max(this.params.pixelRatio, ~~(bar_width / 2))
                         : Math.max(
                             this.params.pixelRatio,
                             this.params.barGap * this.params.pixelRatio
                         );
-                const step = bar + gap;
+                const x_step = bar_width + gap_width;
 
-                const scale = length / this.width;
-                const first = start;
-                const last = end;
-                let i = first;
+                // note: this should be 'Math.ceil()', but for consistency I'm leaving it fractional.
+                const num_bars = (this.width / x_step);
 
-                for (i; i < last; i += step) {
-                    const peak =
-                        peaks[Math.floor(i * scale * peakIndexScale)] || 0;
-                    let h = Math.round((peak / absmax) * halfH);
+                // Next: compute number of peaks in desired range
+                const peakIndexScale = hasMinVals ? 2 : 1;
+                const first_peak = start;
+                const last_peak = end;
+                const num_peaks = (last_peak - first_peak + 1);
+                const peak_step = num_peaks / num_bars;
+
+                for (let i = 0; i < num_bars; i ++) {
+                    const peak_index = first_peak + i * peak_step;
+                    const peak_value = peaks[Math.floor(peak_index * peakIndexScale)] || 0;
+                    let provisional_peak_height = Math.round((peak_value / absmax) * halfH);
 
                     /* in case of silences, allow the user to specify that we
                      * always draw *something* (normally a 1px high bar) */
-                    if (h == 0 && this.params.barMinHeight)
-                        h = this.params.barMinHeight;
+                    const peak_height = (
+                        (provisional_peak_height == 0)
+                            ? this.params.barMinHeight
+                            : provisional_peak_height);
 
+                    const bar_x = i * x_step;
                     this.fillRect(
-                        i + this.halfPixel,
-                        halfH - h + offsetY,
-                        bar + this.halfPixel,
-                        h * 2,
+                        bar_x + this.halfPixel,
+                        halfH - peak_height + offsetY,
+                        bar_width + this.halfPixel,
+                        peak_height * 2,
                         this.barRadius
                     );
                 }
