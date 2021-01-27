@@ -356,6 +356,39 @@ export default class WaveSurfer extends util.Observer {
     static util = util;
 
     /**
+     * Update params for wavesurfer.  Note that this is an incomplete
+     * hack intended only to support specific params for debugging purposes.
+     * It's not a reliable public method.
+     *
+     * Currently the only update supported is 'barWidth'.
+     *
+     * @param {WavesurferParams} params Params for wavesurfer
+     */
+    updateParams(params) {
+        /**
+         * Extract relevant parameters (or defaults)
+         */
+        const old_bar_width = this.params.barWidth;
+        const new_bar_width = params.barWidth;
+
+        this.params = Object.assign(this.params, this.defaultParams, params);
+        // 'deepify' the copy
+        this.params.splitChannelsOptions = Object.assign(
+            this.params.splitChannelsOptions,
+            this.defaultParams.splitChannelsOptions,
+            params.splitChannelsOptions
+        );
+        this.params.restrictOptions = Object.assign(
+            this.params.restrictOptions,
+            this.defaultParams.restrictOptions,
+            params.restrictOptions
+        );
+
+        if (old_bar_width != new_bar_width) { // 'undefined === undefined' is true
+            this.drawParamsChanged();
+        }
+    }
+    /**
      * Initialise wavesurfer instance
      *
      * @param {WavesurferParams} params Instantiation options for wavesurfer
@@ -366,21 +399,14 @@ export default class WaveSurfer extends util.Observer {
     constructor(params) {
         super();
         /**
-         * Extract relevant parameters (or defaults)
          * @private
          */
-        this.params = Object.assign({}, this.defaultParams, params);
-        // 'deepify' the copy
-        this.params.splitChannelsOptions = Object.assign(
-            {},
-            this.defaultParams.splitChannelsOptions,
-            params.splitChannelsOptions
-        );
-        this.params.restrictOptions = Object.assign(
-            {},
-            this.defaultParams.restrictOptions,
-            params.restrictOptions
-        );
+        this.params = {};
+        this.params.restrictOptions = {};
+        this.params.splitChannelsOptions = {};
+
+        this.updateParams(params);
+
         /** @private */
         this.container =
             'string' == typeof params.container

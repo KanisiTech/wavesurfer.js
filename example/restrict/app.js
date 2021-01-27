@@ -159,4 +159,14 @@ document.addEventListener("DOMContentLoaded", function() {
         }
         wavesurfer.updateRestrictOptions(options.restrictOptions);
     });
+
+    $("[data-action=toggle-draw]").click(function() {
+        if (options.barWidth) {
+            options.barWidth = undefined;
+        } else {
+            options.barWidth = 10;
+        }
+
+        wavesurfer.updateParams(options);
+    });
 });
